@@ -1,0 +1,382 @@
+<!Doctype html>
+<html>
+ <head>
+     <style>
+ 
+         
+         .btn-group button {
+              background-color: #000000; /* Green background */
+  border: 0px solid midnightBlue; 
+  color: white; /* White text */
+  padding: 14px 31.05px; /* Some padding */
+  cursor: pointer; 
+  float: left; /* Float the buttons side by side */
+         }
+         .btn-group:after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.btn-group button:not(:last-child) {
+  border-right: none; /* Prevent double borders */
+}
+
+/* Add a background color on hover */
+.btn-group button:hover {
+  background-color: #191970;
+}
+          audio{
+            
+            visibility: hidden;
+}
+input {
+            font-size: 1em;
+            font-family:cursive;
+            border-color:darkslategrey;
+            
+        }
+
+ 
+     </style>
+ <title>
+ bestGame! ever crated in the entire world of games
+ </title>
+  </head>
+  
+  <body>
+      <input type="number" id="myNumber" value="000">
+      <b><i> Good luck!</i> </b>
+    <audio controls id="music">
+<source src="C:\Users\User\Desktop\bat.mp3" type="audio/mpeg">
+<source src="C:\Users\User\Desktop\bat.mp3" type="audio/mpeg">
+</audio>
+      
+      
+      
+
+      <div class="btn-group">
+        <button onclick="setMaxScore()">קבע תוצאה לניצחון</button> 
+     <button onclick="hard()">קשה</button>  
+    <button onclick="mediem()">בינוני</button> 
+    <button onclick="easy()">קל</button>
+    <button onclick="forTwo()">לשניים</button>
+    <button onclick="audioOff()">עצור קול</button>
+    <button onclick="audioON()">הפעל קול</button>
+      </div>
+
+
+
+<canvas id = "gameCanvas" width = "725"
+height = "500"></canvas>
+<script>
+ 
+
+var canvas;
+var canvasContext;
+var ballx = 370;
+var ballSpeedx = 15;
+
+var score1 = 0;
+var score2 = 0;
+var WINNING_SCORE =  50 ;
+
+var color1 = 'green';
+var color2 = 'green';
+
+var button = 0;
+    
+var showWinScreen = false;
+var audioOn = true;
+var bally = 250;
+var ballSpeedy = 0;
+var paddle1y = 200;
+var paddle2y = 200;
+var paddleySpeed = 10;
+const PADDLE_HEIGHT = 100;
+const PADDLE_THICKNESS = 10;
+var myMusic= document.getElementById("music");
+
+function setMaxScore(){
+      var x = document.getElementById("myNumber");
+  var defaultVal = x.defaultValue;
+  var currentVal = x.value;
+    WINNING_SCORE = currentVal;
+      console.log(WINNING_SCORE);
+}
+function forTwo(){
+    ballSpeedx = 15
+    ballSpeedy = 0
+    var keyclick = {};
+document.addEventListener("keydown", function (event) {
+    keyclick[event.keyCode]=true;
+    
+    move1();
+    move2();
+    console.log("i work")
+},false);
+document.addEventListener("keyup", function (event) {
+    delete keyclick[event.keyCode];
+},false);
+
+function move1(){
+    if (87 in keyclick){
+        paddle1y = paddle1y - paddleySpeed;
+    }else if (83 in keyclick){
+        paddle1y = paddle1y + paddleySpeed;
+    }}
+    function move2(){
+    if (38 in keyclick){
+        paddle2y = paddle2y - paddleySpeed;
+    }else if (40 in keyclick){
+        paddle2y = paddle2y + paddleySpeed;
+    }
+}
+    button = 3;
+}
+function hard(){
+    ballSpeedx = 20
+    button = 55;
+}
+function mediem(){
+    ballSpeedx = 15
+    button = 55;
+}
+function easy(){
+    ballSpeedx = 10
+    button = 55;
+}    
+
+function calculateMousePos(evt){
+		var rect = canvas.getBoundingClientRect();
+		var root = document.documentElement;
+		var mouseX = evt.clientX - rect.left - root.scrollLeft;
+		var mouseY = evt.clientY - rect.top - root.scrollTop;
+		return {
+				x:mouseX,
+				y:mouseY
+			};
+}
+function ballReset(){
+	if (score1 >= WINNING_SCORE ||
+	score2 >= WINNING_SCORE){
+	showWinScreen = true;
+    paddle1y = 250;
+    paddle2y = 250;
+    pause()
+	}
+		ballSpeedy = 0
+        paddle1y = 250;
+        paddle2y = 250;
+		ballx = canvas.width/2;
+		bally = canvas.height/2;
+		ballSpeedx = -ballSpeedx;
+}	
+function hanleMouseClick(evt){
+		if(showWinScreen){
+		scoreReset()
+		showWinScreen = false;
+        audioON()
+		}
+}
+
+window.onload = function( ) {
+	canvas = document.getElementById( 'gameCanvas' );
+	canvasContext = canvas.getContext('2d');
+	var framesPerSecond = 40;
+	setInterval (function( ) {
+        drawEverything( );
+		moveEverything( );
+        move();
+	}, 1000/framesPerSecond );
+	canvas.addEventListener('mousedown' ,hanleMouseClick)
+	
+	canvas.addEventListener('mousemove',
+		function(evt){
+            if (button >=50){
+			var mousePos = calculateMousePos(evt);
+			paddle1y = mousePos.y-PADDLE_HEIGHT/2;}
+		});
+}
+function cumputerMovement(){
+    if (button >= 50){
+var paddle2yCenter = paddle2y + (PADDLE_HEIGHT/2);
+	if(paddle2yCenter < bally-10) {
+		paddle2y += 9;
+	} else if(paddle2yCenter > bally + 10){
+		paddle2y -= 9;
+    }
+    }
+}
+function play() {
+if (audioOn){
+myMusic.play();
+}
+}
+function audioOff(){
+    audioOn = false;
+}
+function audioON(){
+    audioOn = true;
+}
+function pause() {
+myMusic.pause();
+}
+function move(){
+    if (button >= 1){ 
+	bally = bally + ballSpeedy;
+	ballx = ballx + ballSpeedx;
+    }
+}
+    
+function moveEverything( ) {
+    
+    cumputerMovement()
+	if(ballx > canvas.width-PADDLE_THICKNESS) {
+		if(bally > paddle2y &&
+		   bally < paddle2y+PADDLE_HEIGHT){
+		   ballSpeedx = -ballSpeedx;
+            pause();
+            if (audioOn){
+            play()}
+            
+		  //make angels 
+		   var deltay = bally
+				-(paddle2y + PADDLE_HEIGHT/2);
+			ballSpeedy = deltay * 0.35;
+		 } else {
+		 	score1++;//musnt be before ballReset
+			ballReset();
+		   }
+	}
+	if(ballx < 0+PADDLE_THICKNESS) {
+		if(bally > paddle1y &&
+		   bally < paddle1y+PADDLE_HEIGHT){
+		   ballSpeedx = -ballSpeedx;
+            pause();
+            if (audioOn){
+            play()}
+            
+		    var deltay = bally
+				-(paddle1y + PADDLE_HEIGHT/2);
+			ballSpeedy = deltay * 0.35;
+		 } else {
+		 	score2++;
+			ballReset();
+		   }
+	}
+	if(bally > canvas.height) {
+		ballSpeedy = -ballSpeedy;
+	}
+	if(bally < 0) {
+		ballSpeedy = -ballSpeedy;
+	}
+if (paddle1y >= canvas.height + PADDLE_HEIGHT/2){ 
+ paddle1y = canvas.height - PADDLE_HEIGHT/2 ;
+}else if (paddle1y <= 0 - PADDLE_HEIGHT/2){ 
+ paddle1y = 0 + PADDLE_HEIGHT/2;
+}
+if (paddle2y >= canvas.height + PADDLE_HEIGHT/2){ 
+ paddle2y = canvas.height - PADDLE_HEIGHT/2 ;
+}else if (paddle2y <= 0 - PADDLE_HEIGHT/2){ 
+ paddle2y = 0 + PADDLE_HEIGHT/2;
+}
+}
+function drawNet() {
+	for (var i = -5; i<canvas.height; i+=40){
+	colorRect(canvas.width/2-1,i,2,20,'white');}
+
+}
+
+
+function drawEverything( ) {
+
+	// next line draws canvas
+	colorRect(0,0,canvas.width,canvas.height,'black');
+	if(showWinScreen){
+            
+            audioOff()
+		    canvasContext.font = "30px Courier New";
+
+			
+			if (score1 >= WINNING_SCORE){
+				canvasContext.fillStyle =  'green';
+				canvasContext.fillText("<--you won!",canvas.width/2.5,canvas.height/2);
+                score1 = 0;
+                score2 = 0;
+			}else {
+				canvasContext.fillStyle =  'green';
+				canvasContext.fillText("you won!-->",canvas.width/2.5,canvas.height/2);
+                score1 = 0;
+                score2 = 0;
+			}
+			canvasContext.fillStyle =  'white';
+			canvasContext.fillText("click to play",canvas.width/2.5,canvas.height/1.5);
+			
+			return;
+	}
+	drawNet()
+	// next line makes left pedal paddle
+	colorRect(0,paddle1y,PADDLE_THICKNESS,PADDLE_HEIGHT,'white');
+	//this is computer pedal
+		colorRect(canvas.width-10,paddle2y,PADDLE_THICKNESS,PADDLE_HEIGHT,'white');
+	// next line makes ball
+	colorCircle(ballx, bally, 10, 'white');
+	//scores
+	Text()
+	scoreColor()
+}
+
+function Text(){
+	canvasContext.font = "30px Arial";
+	canvasContext.fillStyle =  color1;
+	canvasContext.fillText(score1,150,100);
+	canvasContext.fillStyle =  color2;
+	canvasContext.fillText(score2,550,100)
+}
+function scoreReset(){
+	score2 = 0
+	score1 = 0
+}
+	
+
+function scoreColor(){
+	if (score2 <= 1 &&
+		   score2 >= 1){
+	color2 = 'gold'
+	}
+		else if (score2 <= 2 &&
+		   score2 >= 2){
+	color2 = 'red'
+	}
+	else if (score2 <= 0 &&
+		   score2 >= 0){
+	color2 = 'green'
+	}
+if (score1 <= 1 &&
+		   score1 >= 1){
+	color1 = 'gold'
+	}
+		else if (score1 <= 2 &&
+		   score1 >= 2){
+	color1 = 'red'
+	}
+		else if (score1 <= 0 &&
+		   score1 >= 0 ){
+	color1 = 'green'
+	}
+}
+function colorCircle(centerx, centery, radius, drawColor) {
+	canvasContext.fillStyle =  drawColor;
+	canvasContext.beginPath( );
+	canvasContext.arc(centerx, centery, radius, 0, Math.PI*2, true);
+	canvasContext.fill( );
+}
+function colorRect(leftx,topy, width,height, drawColor){
+	canvasContext.fillStyle = drawColor;
+	canvasContext.fillRect(leftx,topy, width,height,);
+}
+
+</script>
+</body>
+<html>
